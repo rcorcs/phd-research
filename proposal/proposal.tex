@@ -147,6 +147,8 @@ them not amenable to automatic parallelization.  Furthermore, code whose memory
 access patterns are indeterminable at compile time due to dependence on program
 inputs can be impossible for these compilers to parallelize~\cite{bruening98}.
 
+PluTo~\cite{bondhugula08}
+
 \subsection{Thread-level speculative parallelism}
 
 In contrast to automatic parallelization that aims at generating a parallel
@@ -258,13 +260,14 @@ with cross iteration dependencies due to indirect memory accesses.  The
 algorithm described is able to compute memory dependencies at runtime, where
 dependence computation and actual computation are performed in pipeline.
 
-\subsection{Evolutionary computing applied to other compiler optimizations}
+%\subsection{Evolutionary computing applied to other compiler optimizations}
+%
+%Stephenson~\etal~\cite{stephenson03} make use of genetic programming to
+%optimize the priority functions associated with two compiler heuristics,
+%namely, predicated hyperblock formation and register allocation, achieving
+%significant speedups over standard baselines.
 
-Stephenson~\etal~\cite{stephenson03} make use of genetic programming to
-optimize the priority functions associated with two compiler heuristics,
-namely, predicated hyperblock formation and register allocation, achieving
-significant speedups over standard baselines.
-
+%%TODO: shrink this paragraph
 Schulte~\etal~\cite{schulte14a} propose a post-compilation optimization
 approach that leverages ideas from evolutionary computation (population-based
 stochastic search), mutational robustness (random mutations yield independent
