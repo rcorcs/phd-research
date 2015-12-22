@@ -2,10 +2,9 @@
 
 \usepackage{authblk}
 \usepackage[sort]{natbib}
-
 \usepackage[utf8]{inputenc}
-
 \usepackage{fullpage}
+\usepackage{color}
 
 %\usepackage{amsmath,amssymb}
 %\usepackage{mathrsfs}
@@ -30,6 +29,8 @@
 \date{Prospective PhD supervisor - Dr. Zheng Wang}
 \author[]{Rodrigo Caetano Rocha}
 
+\newcommand\FIXME[1]{\textcolor{red}{FIX:}\textcolor{red}{#1}}
+
 \begin{document}
 \maketitle
 
@@ -37,7 +38,9 @@
 
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction} 
+
+\FIXME{ZW: The introduction seems to be too long. I think you should make sure you get to the point to describe your approach on the first paper}
 
 During the last several years, modern computers are increasingly parallel and
 heterogeneous~\cite{mohanty12,misailovic13}.  With parallel architectures being
@@ -102,9 +105,23 @@ techniques~\cite{tournavitis09,wang14a} and also evolutionary
 computing~\cite{walsh95,walsh96,williams96,williams99}.  However, extensive
 research into automatic parallelization over the years has lead to the
 development of a large body of heuristic and analytical techniques which may be
-included into such modern approaches~\cite{williams99}. 
+included into such modern approaches~\cite{williams99}.
+
+\FIXME{This section should answer four questions:
+1. Why bother?  (What problems the academic/industry will have if 
+this problem is not solved?
+2. Why it has been solved yet?
+3. How will you solve this problem? (This is missing)
+4. How much better the world will be if the proposed approach works? (Summarize your impact.)
+}
+
+\FIXME{ZW: I think this section should be shorten and focus answering the previous
+four questions. Try to use terms that can be understood by a layman.}
+
 
 \section{Related work}
+\FIXME{One paragraph per topic--not more.}
+
 
 In this section we present an overview of several work related to automatic
 parallelization of sequential code, where we discuss several parallelization
@@ -180,7 +197,7 @@ Xeon and the Cell processors.  They use an artificial neural network (ANN)
 model to predict the scalability of a program and select the optimal thread
 number for it.  Afterwards, a multi-class Support Vector Machine (SVM) model is
 used to select a scheduling policy, such as cyclic, dynamic, guided or block
-scheduling. 
+scheduling.
 
 The approach proposed by Tournavitis~\etal~\cite{tournavitis09} and
 Wang~\etal~\cite{wang14a}, integrates profile-driven parallelism detection and
@@ -328,7 +345,9 @@ loops can produce significant performance gains (up to a factor of seven
 reduction in overall execution time) in return for small (less than 10\%)
 accuracy losses.
 
-\section{Research directions}\label{sec:research-dir}
+\section{Research Themes}\label{sec:research-dir}
+
+\FIXME{ZW: Try to summarize your approach in the first paragraph of this section}
 
 It is widely known that detecting parallelism with static compilers in large,
 general programs is challenging~\cite{kennedy01,chen03}.  In order to overcome
@@ -339,7 +358,15 @@ approaches where it is possible to parallelize aggressively rather than
 conservatively~\cite{chen03,williams96,williams99}. In this section we suggest
 some possible research directions and their respective challenges.
 
+\FIXME{Breakdown your approach to research themes. Make it 
+clear what problem each theme tries to solve and what's the
+output of each theme.}
+
 \subsection{An evolutionary approach}
+\FIXME{I think this goes into too much details. Bear in mind
+the reviewer is unlikely to be an expert in compilers or machine learning.
+Try to explain your ideas without using jargons. 
+}
 
 Automatic parallelization using evolutionary computing has an optimistic
 approach, where the code is parallelized more aggressively.  Each individual of
@@ -425,6 +452,8 @@ other available parallel processor~\cite{tournavitis09,wang14a,leung09}.  In a
 heterogeneous system, besides the raw performance of each processor,
 synchronization, data communication or even energy consumption must also be
 considered when evaluating how the parallel mapping should be performed.
+
+\FIXME{We need a conclusion section and timetable here}
 
 \bibliographystyle{abbrv}
 \bibliography{ref}
