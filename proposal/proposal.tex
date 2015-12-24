@@ -6,19 +6,6 @@
 \usepackage{fullpage}
 \usepackage{color}
 
-%\usepackage{amsmath,amssymb}
-%\usepackage{mathrsfs}
-%\usepackage{mathtools}
-%\usepackage{epsfig,amsfonts,amsthm,amssymb,latexsym,amsmath}
-%\usepackage[noend]{algpseudocode}
-%\usepackage{algorithm}
-
-%\usepackage{caption}
-%\usepackage{subcaption}
-
-%\usepackage{color}
-%\usepackage{graphicx}
-
 \usepackage{indentfirst}
 
 \newcommand{\etal}{et~al.}
@@ -130,123 +117,186 @@ approaches for both multi-core and heterogeneous systems.
 \subsection{Automatic parallelism based on static analysis}
 
 Numerous early work make use of static analysis techniques in order to
-parallelize affine loops~\cite{kuck81,padua93,blume94,lim97}.
-Kuck~\etal~\cite{kuck81} discuss the use of data dependence graphs for several
-code transformations and optimizations, including loop distribution, loop
-fusion, loop blocking, loop interchanging, etc.  Lim and Lam~\cite{lim97}
-propose an algorithm for finding the optimal affine transformations that
-maximize parallelism while minimizing synchronization in programs with
-arbitrary loop nesting and affine data accesses.
-
-Misailovic~\etal~\cite{misailovic13} present {\em QuickStep}. Guided by
-performance measurements, static analysis, loop and memory profiling
-information, and statistical accuracy tests on the outputs of test executions,
-QuickStep automatically searches this space to find a parallel program that
-maximizes performance subject to a specified accuracy goal.
-
-QuickStep prioritizes the parallelization of loops that consume more execution
-time, where it explores the parallelization space for each loop by repeatedly
-applying accuracy and performance enhancing transformations.  Once the final
-parallelization is obtained, QuickStep produces an interactive parallelization
-report that a developer can navigate to evaluate the acceptability of this
-parallelization and obtain insight into how the application responds to
-different parallelization strategies.
-
-Automatic parallelization based on static analysis is challenging and limited
+parallelize affine loops~\cite{kuck81,padua93,blume94,lim97,bondhugula08,misailovic13}.
+However, automatic parallelization based on static analysis is challenging and limited
 in the type of code that they can
 parallelize~\cite{bruening98,kennedy01,chen03}.  In order to identify parallel
 regions of code they must use complex interprocedural analyses to prove that
 the code has no data dependencies for all possible inputs.  Typical code
 targeted by these compilers consists of nested loops with affine array accesses
-written in a language with limited aliasing.  Large systems written in modern
+written in a language with limited aliasing. Large systems written in modern
 languages usually contain multiple modules and memory aliasing, which makes
 them not amenable to automatic parallelization.  Furthermore, code whose memory
 access patterns are indeterminable at compile time due to dependence on program
 inputs can be impossible for these compilers to parallelize~\cite{bruening98}.
 
-PluTo~\cite{bondhugula08}
+%Numerous early work make use of static analysis techniques in order to
+%parallelize affine loops~\cite{kuck81,padua93,blume94,lim97}.
+%Kuck~\etal~\cite{kuck81} discuss the use of data dependence graphs for several
+%code transformations and optimizations, including loop distribution, loop
+%fusion, loop blocking, loop interchanging, etc.  Lim and Lam~\cite{lim97}
+%propose an algorithm for finding the optimal affine transformations that
+%maximize parallelism while minimizing synchronization in programs with
+%arbitrary loop nesting and affine data accesses.
+%
+%Misailovic~\etal~\cite{misailovic13} present {\em QuickStep}. Guided by
+%performance measurements, static analysis, loop and memory profiling
+%information, and statistical accuracy tests on the outputs of test executions,
+%QuickStep automatically searches this space to find a parallel program that
+%maximizes performance subject to a specified accuracy goal.
+%
+%QuickStep prioritizes the parallelization of loops that consume more execution
+%time, where it explores the parallelization space for each loop by repeatedly
+%applying accuracy and performance enhancing transformations.  Once the final
+%parallelization is obtained, QuickStep produces an interactive parallelization
+%report that a developer can navigate to evaluate the acceptability of this
+%parallelization and obtain insight into how the application responds to
+%different parallelization strategies.
+%
+%Automatic parallelization based on static analysis is challenging and limited
+%in the type of code that they can
+%parallelize~\cite{bruening98,kennedy01,chen03}.  In order to identify parallel
+%regions of code they must use complex interprocedural analyses to prove that
+%the code has no data dependencies for all possible inputs.  Typical code
+%targeted by these compilers consists of nested loops with affine array accesses
+%written in a language with limited aliasing.  Large systems written in modern
+%languages usually contain multiple modules and memory aliasing, which makes
+%them not amenable to automatic parallelization.  Furthermore, code whose memory
+%access patterns are indeterminable at compile time due to dependence on program
+%inputs can be impossible for these compilers to parallelize~\cite{bruening98}.
+%
+%PluTo~\cite{bondhugula08}
 
 \subsection{Thread-level speculative parallelism}
 
 In contrast to automatic parallelization that aims at generating a parallel
 code, thread-level speculation (TLS) approaches performs sequential code
 parallelization during runtime in a speculative manner.  It consists of
-selecting regions of code to execute in parallel, relying on the hardware to
+selecting regions of code to execute in parallel, usually relying on specilized hardware to
 detect dependence violations and re-execute the conflicting sections such that
 sequential execution semantics is preserved~\cite{hammond98,chen03,wu08}.
-
 Although TLS overcomes limitations intrinsic with conservative compile-time
 automatic parallelizing tools by extracting parallel threads optimistically and
-only ensuring absence of data dependence violations at runtime.  TLS usually
-requires a specialized hardware for monitoring memory accesses made by the
-parallel threads and for restarting any thread that attempt to violate true
-dependencies~\cite{krishnan98,hammond98,wu08}.  The overheads associated with
-maintaining speculative state is a significant barrier for the use of
-TLS~\cite{yiapanis13}.
+only ensuring absence of data dependence violations at runtime, TSL usually requires
+a specialized hardware and The overheads associated with
+maintaining speculative state is a significant barrier for its usage~\cite{yiapanis13}.
 
-While TSL is usually performed mainly by hardware, there also exists
-software-based speculative parallelism, such as Softspec, which is the
-combination of a compiler and runtime system that can target program
-binaries~\cite{bruening98}.
+%In contrast to automatic parallelization that aims at generating a parallel
+%code, thread-level speculation (TLS) approaches performs sequential code
+%parallelization during runtime in a speculative manner.  It consists of
+%selecting regions of code to execute in parallel, usually relying on specilized hardware to
+%detect dependence violations and re-execute the conflicting sections such that
+%sequential execution semantics is preserved~\cite{hammond98,chen03,wu08}.
+%
+%Although TLS overcomes limitations intrinsic with conservative compile-time
+%automatic parallelizing tools by extracting parallel threads optimistically and
+%only ensuring absence of data dependence violations at runtime.  TLS usually
+%requires a specialized hardware for monitoring memory accesses made by the
+%parallel threads and for restarting any thread that attempt to violate true
+%dependencies~\cite{krishnan98,hammond98,wu08}.  The overheads associated with
+%maintaining speculative state is a significant barrier for the use of
+%TLS~\cite{yiapanis13}.
+%
+%While TSL is usually performed mainly by hardware, there also exists
+%software-based speculative parallelism, such as Softspec, which is the
+%combination of a compiler and runtime system that can target program
+%binaries~\cite{bruening98}.
 
 \subsection{Machine learning based approach}
 
-Wang and O'Boyle~\cite{wang09} propose a machine learning based approach for
-mapping fine-grain parallelism of OpenMP programs to multi-cores, namely, Intel
-Xeon and the Cell processors.  They use an artificial neural network (ANN)
-model to predict the scalability of a program and select the optimal thread
-number for it.  Afterwards, a multi-class Support Vector Machine (SVM) model is
-used to select a scheduling policy, such as cyclic, dynamic, guided or block
-scheduling.
+In addition to parallelism detection, automatic parallelization mechanisms
+must also determine whether it is profitable to parallelize a loop and how the
+loop should be scheduled if a parallel execution is profitable.
+Recent work~\cite{wang09,tournavitis09,wang14a} have been using machine learning
+techniques for integrating automatic portable mapping with automatic parallelism
+discovery.
+Prediction mechanisms are applied
+to each parallel loop candidate, deciding if and how the parallel mapping
+should be performed.
 
-The approach proposed by Tournavitis~\etal~\cite{tournavitis09} and
-Wang~\etal~\cite{wang14a}, integrates profile-driven parallelism detection and
-machine learning based mapping in a single framework for semi-automated
-parallelism, where the user is expected to approve those loops where
-parallelization is likely to be beneficial, but correctness cannot be proven
-conclusively.  They use profiling data to extract actual control and data
-dependencies and enhance the corresponding static analyses with dynamic
-information. Subsequently, they apply a previously trained prediction mechanism
-to each parallel loop candidate and decide if and how the parallel mapping
-should be performed. Finally, they generate parallel code using standard OpenMP
-annotations.
+%Wang and O'Boyle~\cite{wang09} propose a machine learning based approach for
+%mapping fine-grain parallelism of OpenMP programs to multi-cores, namely, Intel
+%Xeon and the Cell processors.  They use an artificial neural network (ANN)
+%model to predict the scalability of a program and select the optimal thread
+%number for it.  Afterwards, a multi-class Support Vector Machine (SVM) model is
+%used to select a scheduling policy, such as cyclic, dynamic, guided or block
+%scheduling.
+%
+%The approach proposed by Tournavitis~\etal~\cite{tournavitis09} and
+%Wang~\etal~\cite{wang14a}, integrates profile-driven parallelism detection and
+%machine learning based mapping in a single framework for semi-automated
+%parallelism, where the user is expected to approve those loops where
+%parallelization is likely to be beneficial, but correctness cannot be proven
+%conclusively.  They use profiling data to extract actual control and data
+%dependencies and enhance the corresponding static analyses with dynamic
+%information. Subsequently, they apply a previously trained prediction mechanism
+%to each parallel loop candidate and decide if and how the parallel mapping
+%should be performed. Finally, they generate parallel code using standard OpenMP
+%annotations.
 
 \subsection{Automatic parallelism based on evolutionary computing}
 
-Walsh and Ryan propose {\em Paragen}~\cite{walsh95,walsh96}, a precursor for
-the use of evolutionary computing in automatic parallelization.  Paragen makes
+Evolutionary computing has previously been applied to automatic parallelization
+and also several other optimizations in compilers~\cite{walsh95,walsh96,williams96,williams99,schulte14a}.
+Previous work on evolutionary parallelization makes
 no attempt to analyse the original code, instead it attempts to directly
-performs both loops and instructions parallelization. The correctness of the
-resulting parallel code are determined by the fitness function based on the
-outputs produced by the original sequential code and the one produced by the
-parallel code.
-
-Williams and Williams~\cite{williams96,williams99} also propose an evolutionary
-approach for automatic parallelization.  This work suggests two genetic
-representation.  The {\em gene-transformation} where each gene represents a
-loop transformation (such as loop-skewing, loop-interchange, loop-fusion,
-loop-splitting, loop-reversal, etc.) and the chromosome has variable-length and
-is composed by an ordered sequence of transformations to be applied.  The {\em
-gene-statement} where each gene represents a single instruction in the source
-code. For the gene-statement representation, no crossover operation is
-performed and the loop transformations are encoded as mutation operators with
-predefined probabilities, where the length of the chromosome can change
-depending on the mutations applied. The fitness function perform an analysis of
-the resulting code of each chromosome generating an estimated execution-time.
-They conclude that the gene-statement representation is better than the
-gene-transformations representation.
-
+performs both loops and instructions parallelization.
 Evolutionary based approaches have an optimistic parallelization strategy,
 experimentally validating the best individuals. Although this approach is not
 limited by dependence analysis techniques, the evolutionary approach produces a
-probabilistic result, only with statistical guarantees.  In
-Section~\ref{subsec:perfvsacc} we present several other work that discuss
-probabilistic and approximate solutions for a variety of problems.
+probabilistic result, only with statistical guarantees.
+The correctness of the
+resulting parallel code is determined by the fitness function, which compares
+the output produced by the original sequential code and the output produced by
+each parallel code generated.
+
+%Walsh and Ryan propose {\em Paragen}~\cite{walsh95,walsh96}, a precursor for
+%the use of evolutionary computing in automatic parallelization.  Paragen makes
+%no attempt to analyse the original code, instead it attempts to directly
+%performs both loops and instructions parallelization. The correctness of the
+%resulting parallel code are determined by the fitness function based on the
+%output produced by the original sequential code and the one produced by the
+%parallel code.
+%
+%Williams and Williams~\cite{williams96,williams99} also propose an evolutionary
+%approach for automatic parallelization.  This work suggests two genetic
+%representation.  The {\em gene-transformation} where each gene represents a
+%loop transformation (such as loop-skewing, loop-interchange, loop-fusion,
+%loop-splitting, loop-reversal, etc.) and the chromosome has variable-length and
+%is composed by an ordered sequence of transformations to be applied.  The {\em
+%gene-statement} where each gene represents a single instruction in the source
+%code. For the gene-statement representation, no crossover operation is
+%performed and the loop transformations are encoded as mutation operators with
+%predefined probabilities, where the length of the chromosome can change
+%depending on the mutations applied. The fitness function perform an analysis of
+%the resulting code of each chromosome generating an estimated execution-time.
+%They conclude that the gene-statement representation is better than the
+%gene-transformations representation.
+%
+%Evolutionary based approaches have an optimistic parallelization strategy,
+%experimentally validating the best individuals. Although this approach is not
+%limited by dependence analysis techniques, the evolutionary approach produces a
+%probabilistic result, only with statistical guarantees.  In
+%Section~\ref{subsec:perfvsacc} we present several other work that discuss
+%probabilistic and approximate solutions for a variety of problems.
+%
+%Evolutionary computing has also been applied to several other optimizations in compilers.
+%Schulte~\etal~\cite{schulte14a} propose a post-compilation optimization
+%approach that leverages ideas from evolutionary computation 
+%in order to reduce energy consumption.
+%The proposed approach is a steady-state evolutionary
+%algorithm, which maintains a population of candidate optimizations (assembly
+%programs), using randomized operators to generate variations, and selecting
+%those that improve an objective function (the power model) while retaining all
+%required functionality expressed in a test suite.  Their results show that the
+%evolutionary approach is effective on multiple architectures, finding
+%hardware-specific optimizations, with an average reduction of 20\% in energy
+%consumption.
 
 \subsection{Automatic parallelization for heterogeneous systems}
 
-Most studies focus on automatic parallelization for CPU only.  However, there
-have been some recent work~\cite{leung09,baskaran10,amini12,govindarajan13}
+Although most studies focus on automatic parallelization for homogenous shared-memory architectures (CPU only),
+there have been some recent work~\cite{leung09,baskaran10,amini12,govindarajan13}
 toward parallelization for heterogeneous architectures, usually GPUs.
 
 Leung~\etal~\cite{leung09} extend the Java virtual machine to detect affine
@@ -265,7 +315,7 @@ model of data dependence is used to perform program transformation for
 efficient data access from GPU global memory.  Their framework performs
 source-to-source transformations, generating CUDA from C code, optimized for
 efficient data access, including tiling strategies.  They use the
-PluTo~\cite{bondhugula08} polyhedral parallel tiling infrastructure and the
+PLuTo~\cite{bondhugula08} polyhedral parallel tiling infrastructure and the
 polyhedral code generator called CLooG~\cite{bastoul04}, which transforms a
 polyhedral representation of a program and affine scheduling constraints into
 final loop code.
@@ -285,39 +335,49 @@ dependence computation and actual computation are performed in pipeline.
 %significant speedups over standard baselines.
 
 %%TODO: shrink this paragraph
-Schulte~\etal~\cite{schulte14a} propose a post-compilation optimization
-approach that leverages ideas from evolutionary computation (population-based
-stochastic search), mutational robustness (random mutations yield independent
-implementations of the same specification), profile-guided optimization
-(performance measured on workloads) and relaxed notions of program semantics
-(customizing software to particular runtime goals and environments provided by
-a software engineer).  The proposed approach is a steady-state evolutionary
-algorithm, which maintains a population of candidate optimizations (assembly
-programs), using randomized operators to generate variations, and selecting
-those that improve an objective function (the power model) while retaining all
-required functionality expressed in a test suite.  Their results show that the
-evolutionary approach is effective on multiple architectures, finding
-hardware-specific optimizations, with an average reduction of 20\% in energy
-consumption.
+%Schulte~\etal~\cite{schulte14a} propose a post-compilation optimization
+%approach that leverages ideas from evolutionary computation (population-based
+%stochastic search), mutational robustness (random mutations yield independent
+%implementations of the same specification), profile-guided optimization
+%(performance measured on workloads) and relaxed notions of program semantics
+%(customizing software to particular runtime goals and environments provided by
+%a software engineer).  The proposed approach is a steady-state evolutionary
+%algorithm, which maintains a population of candidate optimizations (assembly
+%programs), using randomized operators to generate variations, and selecting
+%those that improve an objective function (the power model) while retaining all
+%required functionality expressed in a test suite.  Their results show that the
+%evolutionary approach is effective on multiple architectures, finding
+%hardware-specific optimizations, with an average reduction of 20\% in energy
+%consumption.
+
 
 \subsection{Performance versus accuracy trade-off}
 \label{subsec:perfvsacc}
 
 Several work discuss probabilistic and approximate architectures in order to
 design hardwares with improved performance regarding power consumption,
-execution time, physical space and architectural
-simplicity~\cite{palem09,palem12,lingamneni12,kirsch12}.  In contrast with
-traditional approaches, approximate architectures does not attempt to correct
-the errors introduced by components which are susceptible to perturbations.
-Palem~\etal~suggest their work has the potential to address challenges and
-impediments to Moore's law arising from material properties and manufacturing
-difficulties, indicating that their shifts from the current-day deterministic
-design paradigm to statistical and probabilistic designs of the
-future~\cite{palem09,palem12}.  Palem~\etal~demonstrate a XOR gate with a
+execution time, physical space and architectural simplicity~\cite{palem09,palem12,lingamneni12,kirsch12}.
+In contrast with traditional approaches, these probabilistic and approximate architectures does not attempt to correct
+the errors introduced by components which are susceptible to perturbations, allowing for errors to arise with small 
+probabilities. For example, Palem~\etal~demonstrate a XOR gate with a
 $3\times$ reduction in energy consumption for a 2.3\% decrease in the
-probability of correctness.  Chakrapani~\etal~\cite{chakrapani08} present a
-mathematically rigorous foundation characterizing the trade-off between the
-energy consumed and the quality of solutions.
+probability of correctness.
+
+%Several work discuss probabilistic and approximate architectures in order to
+%design hardwares with improved performance regarding power consumption,
+%execution time, physical space and architectural
+%simplicity~\cite{palem09,palem12,lingamneni12,kirsch12}.  In contrast with
+%traditional approaches, approximate architectures does not attempt to correct
+%the errors introduced by components which are susceptible to perturbations.
+%Palem~\etal~suggest their work has the potential to address challenges and
+%impediments to Moore's law arising from material properties and manufacturing
+%difficulties, indicating that their shifts from the current-day deterministic
+%design paradigm to statistical and probabilistic designs of the
+%future~\cite{palem09,palem12}.  Palem~\etal~demonstrate a XOR gate with a
+%$3\times$ reduction in energy consumption for a 2.3\% decrease in the
+%probability of correctness.  Chakrapani~\etal~\cite{chakrapani08} present a
+%mathematically rigorous foundation characterizing the trade-off between the
+%energy consumed and the quality of solutions.
 
 Some recent work also propose numerous code transformations aiming at the
 trade-off between performance and accuracy.  For certain types of applications,
@@ -330,20 +390,22 @@ transformations} produces a transformed code that performs the same computation
 as the original code but only on a subset of the elements obtained by some
 sampling policy; $(iii)$ {\em loop perforation} is another type of program
 transformation which transforms a loop into a new loop where only a subset of
-the original loop iterations is performed.
+the original loop iterations is performed. Loop perforation has been studied by
+several work showing a reduction in execution time and resource consumptions
+while producing small accuracy losses~\cite{misailovic11,douskos11}.
 
-Misailovic~\etal~\cite{misailovic11} provide a probabilistic approach based
-that guarantees for the accuracy produced by loop perforation, while reducing
-execution time and resource consumptions.  The transformations are analyzed
-based on the perforation noise, defined by the difference between the result
-that the perforated computation produces and the result that the original
-computation produces. The perforation noise is then used to produce the
-probabilistic guarantee of the transformation's accuracy.
+%Misailovic~\etal~\cite{misailovic11} provide a probabilistic approach based
+%that guarantees for the accuracy produced by loop perforation, while reducing
+%execution time and resource consumptions.  The transformations are analyzed
+%based on the perforation noise, defined by the difference between the result
+%that the perforated computation produces and the result that the original
+%computation produces. The perforation noise is then used to produce the
+%probabilistic guarantee of the transformation's accuracy.
 
-Sidiroglou~\etal~\cite{douskos11} show that perforating appropriately selected
-loops can produce significant performance gains (up to a factor of seven
-reduction in overall execution time) in return for small (less than 10\%)
-accuracy losses.
+%Sidiroglou~\etal~\cite{douskos11} show that perforating appropriately selected
+%loops can produce significant performance gains (up to a factor of seven
+%reduction in overall execution time) in return for small (less than 10\%)
+%accuracy losses.
 
 \section{Research Themes}\label{sec:research-dir}
 
@@ -452,6 +514,24 @@ other available parallel processor~\cite{tournavitis09,wang14a,leung09}.  In a
 heterogeneous system, besides the raw performance of each processor,
 synchronization, data communication or even energy consumption must also be
 considered when evaluating how the parallel mapping should be performed.
+
+\section{Research plan}
+
+\begin{description}
+\item[Year 1] I will perform an extensive literature review in the area, identifying
+weaknesses and strengths of current approaches for automatic parallelization.
+
+\item[Year 2] 
+\item[Year 3] 
+\end{description}
+
+\section{Expected results}
+
+In this research, we expect
+to improve the state-of-the-art in energy-aware automatic parallelization
+for heterogeneous systems, overcoming some of the limitations in current dependence analysis mechanisms.
+The results produced by this research should be published in the main journals and conferences
+of the area.
 
 \FIXME{We need a conclusion section and timetable here}
 
