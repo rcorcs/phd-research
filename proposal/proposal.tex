@@ -189,9 +189,9 @@ parallelizing aggressively rather than
 conservatively~\cite{chen03,williams96,williams99}, such as evolutionary
 approaches aided by profiling and machine learning techniques. 
 
-\FIXME{Breakdown your approach to research themes. Make it 
-clear what problem each theme tries to solve and what's the
-output of each theme.}
+%\FIXME{Breakdown your approach to research themes. Make it 
+%clear what problem each theme tries to solve and what's the
+%output of each theme.}
 
 \subsection{Theme 1: An optimization model}
 
@@ -229,49 +229,65 @@ heterogeneous system, besides the raw performance of each processor,
 synchronization, data communication or even energy consumption must also be
 considered when evaluating how the parallel mapping should be performed.
 
+We intend to extend the discrete optimization model in order to support
+energy-aware parallelizations, besides integrating with heterogeneous
+architectures, such as MICs and GPUs.  The optimization model must consider the
+parallelization profitability for the available architecture,
+resulting in a model which encompass portable mapping.
+
 \subsection{Theme 3: Solving dependence violations during runtime}
 
-By modeling the automatic parallelization as an optimization problem,
-defining a parallelization search space in an optimistic manner, both the
-evolutionary and the machine learning based approaches will produce
-probabilistic solutions.
+%By modeling the automatic parallelization as an optimization problem,
+%defining a parallelization search space in an optimistic manner, both the
+%evolutionary and the machine learning based approaches will produce
+%probabilistic solutions.
 
-If a probabilistic solution is unacceptable, we can use speculative techniques
-for detecting dependence violations during runtime for re-execution of
-conflicting sections providing precise solutions.  This dependence monitoring
-mechanism can be implemented entirely in software, similar to
+Optimistic approaches for automatic parallelizationg produce probabilistic
+solutions.  If a probabilistic solution is unacceptable, we can use speculative
+techniques for detecting dependence violations during runtime for re-execution
+of conflicting sections providing precise solutions.  This dependence
+monitoring mechanism can be implemented entirely in software, similar to
 Softspec~\cite{bruening98}, allowing this technique to be used in general
 parallel hardware.  Although this mechanism guarantee correctness, it adds some
 overhead to the overall execution, which needs to be properly balanced for
 performance.
 
 It is also possible to integrate techniques from dynamic parallelization, such
-as those used by the \emph{hybrid analysis}~\cite{rus03}. \emph{Hybrid
-analysis} combines static and runtime analysis of memory references into a
-single framework.  In the context of heterogeneous systems, Govindarajan and
+as those used by the \emph{hybrid analysis}~\cite{rus03}, which combines static
+and runtime analysis of memory references into a single framework.  In the
+context of heterogeneous systems, Govindarajan and
 Anantpur~\cite{govindarajan13} describe an algorithm which is able to compute
 memory dependencies at runtime, where dependence computation and actual
 computation are pipelined on a GPU.
 
-
-
 \section{Research plan}
 
 \begin{description}
-\item[Year 1] I will perform an extensive literature review in the area, identifying
-weaknesses and strengths of current approaches for automatic parallelization.
 
-\item[Year 2] 
-\item[Year 3] 
+\item[Year 1] I will perform an extensive literature review in the area,
+identifying weaknesses and strengths of current approaches for automatic
+parallelization.  The discrete optimization model (Theme 1) is intended to be
+developed during the first year.
+
+\item[Year 2] I will extend the optimization model regarding energy
+consumption.  Afterwards, the automatic parallelization will be integrated with
+heterogeneous architectures (Theme 2).  One or two papers are expected during
+the second year.   
+
+\item[Year 3] During the third year, the optimistic automatic parallelization
+will be extended with solutions for dependence violations during runtime (Theme
+3).  One or two papers as well as the PhD thesis are expected during the final
+year.
+
 \end{description}
 
 \section{Expected results}
 
-In this research, we expect
-to improve the state-of-the-art in energy-aware automatic parallelization
-for heterogeneous systems, overcoming some of the limitations in current dependence analysis mechanisms.
-The results produced by this research should be published in the main journals and conferences
-of the area.
+In this research, we expect to improve the state-of-the-art in energy-aware
+automatic parallelization for heterogeneous systems, overcoming some of the
+limitations in current dependence analysis mechanisms.  The results produced by
+this research should be published in the main journals and conferences of the
+area.
 
 \FIXME{We need a conclusion section and timetable here}
 
