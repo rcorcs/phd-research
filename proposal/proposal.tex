@@ -109,7 +109,7 @@ written in a language with limited aliasing. Large systems written in modern
 languages usually contain multiple modules and memory aliasing, which makes
 them not amenable to automatic parallelization.  Furthermore, code whose memory
 access patterns are indeterminable at compile time due to dependence on program
-inputs can be impossible for these compilers to parallelize~\cite{bruening98}.
+inputs can be impractical for these compilers to parallelize~\cite{bruening98}.
 
 \subsection{Thread-level speculative parallelism}
 
@@ -122,8 +122,8 @@ sections such that sequential execution semantics is
 preserved~\cite{hammond98,chen03,wu08}.  Although TLS overcomes limitations
 intrinsic with conservative compile-time automatic parallelizing tools by
 extracting parallel threads optimistically and only ensuring absence of data
-dependence violations at runtime, TSL usually requires a specialized hardware
-and The overheads associated with maintaining speculative state is a
+dependence violations at runtime, TLS usually requires a specialized hardware
+and the overheads associated with maintaining speculative state is a
 significant barrier for its usage~\cite{yiapanis13}.
 
 \subsection{Machine learning based approach}
@@ -200,7 +200,7 @@ In order to overcome the limitations of automatic parallelization based on
 static analysis, we intend to define an optimization model for parallelization
 based on discrete optimization. A discrete optimization model allows for using
 several integer programming techniques, such as evolutionary computing,
-simulated annealing, artificial neural networks and others.  While this
+simulated annealing, hill climbing and others.  While this
 approach is not limited by dependence analysis mechanisms, several challenges
 need to be addressed.
 
