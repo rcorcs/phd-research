@@ -1,0 +1,284 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{authblk}
+\usepackage[sort]{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{color}
+
+\usepackage{indentfirst}
+
+\newcommand{\etal}{et~al.}
+\newcommand{\protosection}[1]{\vspace{1ex}\noindent\textbf{#1}}
+
+%\linespread{0.96}
+\title{\textbf{Automatic Parallelization for Heterogeneous Computing}}
+\date{Prospective Ph.D. supervisor - Dr. Zheng Wang}
+\author[]{Rodrigo Caetano Rocha}
+
+\newcommand\FIXME[1]{\textcolor{red}{FIX:}\textcolor{red}{#1}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introdução} 
+
+Durante os últimos anos, os computadores modernos estão cada vez mais paralelos e
+heterogêneos~\cite{mohanty12,misailovic13}. Com arquiteturas paralelas sendo
+amplamente difundido, a programação paralela deve estender-se para além de sua esfera tradicional de
+aplicações científicas~\cite{li09}. O objetivo final de um programador em um
+ambiente de computação moderno é escrever aplicações escaláveis que podem aproveitar por completo
+de todos os recursos disponíveis, uma vez que paralelização é um aspecto
+importante que pode produzir grande impacto sobre o desempenho e
+consumo de energia~\cite{cockx10}. No entanto, programação paralela é conhecida por ser
+difícil e sujeita a erros, impondo vários desafios ao programador~\cite{cockx10,mccool10,mccool12}.
+Assim, a dificuldade de
+desenvolvimento de software paralelo é um dos principais obstáculos para um programador médio
+explorar consideravelmente o poder computacional que diferentes multiprocessadores
+oferecem~\cite{misailovic13}.
+
+A fim de aproveitar de forma transparente todos os recursos disponíveis por
+arquiteturas paralelas, paralelização automática é uma otimização que produz código paralelo que é semanticamente equivalente a um código seqüencial recebido como entrada. No entanto, paralelização automática é um problema difícil uma vez que o código paralelo deve ser correto e também executar de forma eficiente na máquina alvo~\cite{williams99}. Apesar do interesse de  pesquisa intenso na área, ainda não somos capazes resolver fora de alguns nichos de domínios~\cite{tournavitis09,wang14a}. Melhorar o desempenho dos programas para multiprocessadores apresenta um desafio porque mesmo quando existe um nível de paralelismo, é difícil para um compilador analisar e identificar todas as dependências reais entre os potenciais \textit{threads} paralelas~\cite{hammond98}.
+
+Além disso, embora esta área tenha sido amplamente estudado, ainda há muito para ser explorado em relação a paralelização automática que também otimiza para consumo de energia, sistemas embarcados~\cite{cordes10} ou outras arquiteturas emergentes de computação~\cite{baskaran10}, tais como processadores massivamente paralelos, incluindo unidades de processamento gráfico (GPUs), processadores de muitos núcleos integrados (MICs), e outros.
+
+Considerando que a maioria dos programas são executados indefinidamente muito mais vezes do que são compilados, compiladores podem suportar otimizações custosas durante o processo de compilação. Trabalhos anteriores sugerem diferentes abordagens para paralelização automática baseado em técnicas de aprendizagem de máquina~\cite{tournavitis09,wang14a} e também em computação evolutiva~\cite{walsh95,walsh96,williams96,williams99}.
+
+Propomos investigar abordagens otimistas, com base no aprendizado de máquina e computação evolutiva, para a paralelização automática, aproveitando ainda das arquiteturas heterogêneas disponíveis, referente a paralelismo e consumo de energia. A abordagem otimista permite superar as limitações das abordagens tradicionais baseadas apenas na análise estática, penalizando precisão com soluções probabilísticas.
+
+\section{Trabalhos relacionados}
+
+Nesta seção, apresentamos uma visão geral dos vários trabalhos relacionados sobre paralelização automática de código seqüencial, onde discutimos várias abordagens de paralelização para ambos sistemas multi-core e heterogêneos.
+
+\subsection{Paralelismo automático baseado em análise estática}
+
+Inúmeros trabalhos iníciais fazem uso de técnicas de análise estática a fim de paralelizar laços afins~\cite{kuck81,padua93,blume94,lim97,bondhugula08,misailovic13}. Contudo, paralelização automática baseada em análise estática é um desafio e limitada ao tipo de código capaz de paralelizar~\cite{bruening98,kennedy01,chen03}. A fim de identificar regiões paralelas no código, deve-se usar análises complexas interprocedurais para provar que o código não possui dependências de dados para todas as entradas possíveis. Códigos típicos visados por estes compiladores consistem de laços aninhados com acessos afins de arranjos escrito em uma linguagem com aliasing limitado. Grandes sistemas escritos em linguagens modernas geralmente contêm vários módulos e aliasing de memória, o que os tornam não passíveis de paralelização automática. Além disso, código cujo padrão de acesso à memória é indeterminável em tempo de compilação devido às dependências das entradas do programa podem ser impraticável para esses compiladores paralelizarem~\cite{bruening98}.
+
+%Numerous early work make use of static analysis techniques in order to
+%parallelize affine
+%loops~\cite{kuck81,padua93,blume94,lim97,bondhugula08,misailovic13}.  However,
+%automatic parallelization based on static analysis is challenging and limited
+%in the type of code that they can
+%parallelize~\cite{bruening98,kennedy01,chen03}.  In order to identify parallel
+%regions of code they must use complex interprocedural analyses to prove that
+%the code has no data dependencies for all possible inputs.  Typical code
+%targeted by these compilers consists of nested loops with affine array accesses
+%written in a language with limited aliasing. Large systems written in modern
+%languages usually contain multiple modules and memory aliasing, which makes
+%them not amenable to automatic parallelization.  Furthermore, code whose memory
+%access patterns are indeterminable at compile time due to dependence on program
+%inputs can be impractical for these compilers to parallelize~\cite{bruening98}.
+
+\subsection{Paralelismo especulativo no nível de threads}
+
+Em contraste com a paralelização automático que visa gerar código paralelo, a abordagem de especulação no nível de thread (TLS) realiza paralelização de código seqüencial em tempo de execução de maneira especulativa. Consiste em selecionar regiões de código para executar em paralelo, geralmente contando com hardware especializado para detectar violações de dependência e re-executar seções com conflito de tal forma que a semântica de execução seqüencial é preservada~\cite{hammond98,chen03,wu08}. Embora TLS supera as limitações intrínseca às ferramentas conservadoras de paralelização automática em tempo de compilação, extraindo segmentos paralelos de maneira otimista e garantindo a ausência de violações de dependência dados apenas em tempo de execução. TLS geralmente requer um hardware especializado e os custos associadas com a manutenção do estado especulativo é um obstáculo significativo para a sua utilização~\cite{yiapanis13}.
+
+%In contrast to automatic parallelization that aims at generating a parallel
+%code, thread-level speculation (TLS) approaches performs sequential code
+%parallelization during runtime in a speculative manner.  It consists of
+%selecting regions of code to execute in parallel, usually relying on specilized
+%hardware to detect dependence violations and re-execute the conflicting
+%sections such that sequential execution semantics is
+%preserved~\cite{hammond98,chen03,wu08}.  Although TLS overcomes limitations
+%intrinsic with conservative compile-time automatic parallelizing tools by
+%extracting parallel threads optimistically and only ensuring absence of data
+%dependence violations at runtime, TLS usually requires a specialized hardware
+%and the overheads associated with maintaining speculative state is a
+%significant barrier for its usage~\cite{yiapanis13}.
+
+\subsection{Abordagens baseadas em aprendizagem de máquina}
+
+Além da detecção de paralelismo, mecanismos de paralelização automática devem também determinar se é rentável para paralelizar um laço e como o laço deve ser escalonado se a execução paralela for rentável. Trabalhos recentes~\cite{wang09,tournavitis09,wang14a} têm utilizado técnicas de aprendizagem de máquina para integrar o mapeamento automático e portátil com a descoberta automático de paralelismo. Mecanismos de previsão são aplicados a cada laço candidato à paralelismo, decidindo se e como o mapeamento paralelo deve ser realizado.
+
+%In addition to parallelism detection, automatic parallelization mechanisms must
+%also determine whether it is profitable to parallelize a loop and how the loop
+%should be scheduled if a parallel execution is profitable.  Recent
+%work~\cite{wang09,tournavitis09,wang14a} have been using machine learning
+%techniques for integrating automatic portable mapping with automatic
+%parallelism discovery.  Prediction mechanisms are applied to each parallel loop
+%candidate, deciding if and how the parallel mapping should be performed.
+
+\subsection{Paralelismo automático baseado em computação evolucionária}
+
+Computação evolutiva foi previamente aplicada a paralelização automática e também várias outras otimizações em compiladores~\cite{walsh95,walsh96,williams96,williams99,schulte14a}. Trabalhos anteriores sobre paralelização evolutiva não faz nenhuma tentativa de analisar o código sequencial original, em vez disso, tenta realizar diretamente a paralelização de laços e instruções. Abordagens evolutivas têm uma estratégia de paralelização otimista, experimentalmente validando os melhores indivíduos. Embora esta abordagem não é limitada por técnicas de análise de dependências, a abordagem evolutiva produz resultados probabilísticos, apenas com garantias estatísticas. A correção do código paralelo resultante é determinada pela função de avaliação, que compara a saída produzida pelo código seqüencial original e a saída produzida por cada código paralelo gerado.
+
+%Evolutionary computing has previously been applied to automatic parallelization
+%and also several other optimizations in
+%compilers~\cite{walsh95,walsh96,williams96,williams99,schulte14a}.  Previous
+%work on evolutionary parallelization makes no attempt to analyse the original
+%code, instead it attempts to directly performs both loops and instructions
+%parallelization.  Evolutionary based approaches have an optimistic
+%parallelization strategy, experimentally validating the best individuals.
+%Although this approach is not limited by dependence analysis techniques, the
+%evolutionary approach produces a probabilistic result, only with statistical
+%guarantees.  The correctness of the resulting parallel code is determined by
+%the fitness function, which compares the output produced by the original
+%sequential code and the output produced by each parallel code generated.
+
+\subsection{Paralelização automática para sistemas heterogêneos}
+
+Embora a maioria dos estudos focam em paralelização automática para arquiteturas homogéneas de memória compartilhada (somente CPU), tem havido alguns trabalhos recentes em direção a paralelização para arquiteturas heterogêneas (geralmente com GPUs). A abordagem usual consiste em detectar laços afins que podem ser paralelizados e executados de forma mais eficiente na GPU ao invés da CPU. Tem havido trabalhos mais focados em ambas as transformações de baixo nível (por exemplo, Leung~\etal~\cite{leung09} estende a máquina virtual do Java para paralelização de bytecodes Java para GPUs) e transformações de alto nível (por exemplo, Baskaran~\etal~\cite{baskaran08,baskaran10} propõem uma transformação entre códigos fonte, utilizando um modelo de compilador poliédrico, também paralelizando para GPUs).
+
+%Although most studies focus on automatic parallelization for homogenous
+%shared-memory architectures (CPU only), there have been some recent
+%work~\cite{leung09,baskaran10,amini12,govindarajan13} toward parallelization
+%for heterogeneous architectures (usually with GPUs).  The usual approach
+%consists in detecting affine loops which can be parallelized and executed more
+%efficiently on the GPU rather than on the CPU.  There have been work more
+%focused on both low-level transformations (e.g. Leung~\etal~\cite{leung09}
+%extend the Java virtual machine for parallelizing Java bytecodes for GPUs) and
+%high-level transformations (e.g. Baskaran~\etal~\cite{baskaran08,baskaran10}
+%propose a source-to-source transformation, using a polyhedral compiler model,
+%also parallelizing for GPUs).
+
+\subsection{Desempenho versus precisão}
+\label{subsec:perfvsacc}
+
+Existem inúmeros trabalhos sobre o equilíbro entre desempenho e precisão em diferentes áreas. Em contraste com as abordagens tradicionais, vários trabalhos discutem arquiteturas probabilísticas e aproximadas, a fim de projetar hardwares com melhor desempenho em matéria de consumo de energia, tempo de execução, espaço físico e simplicidade arquitetural~\cite{palem09,palem12,lingamneni12,kirsch12}. Alguns trabalhos recentes também propõem numerosas transformações de código visando precisão com melhor desempenho, tempo de execução e o consumo de recursos, enquanto produz pequenas perdas de precisão~\cite{misailovic11,douskos11,zhu12}.
+
+%There have been numerous work regarding the trade-off between performance and
+%accuracy in different areas.  In contrast with traditional approaches, several
+%work discuss probabilistic and approximate architectures in order to design
+%hardwares with improved performance regarding power consumption, execution
+%time, physical space and architectural
+%simplicity~\cite{palem09,palem12,lingamneni12,kirsch12}.  Some recent work also
+%propose numerous accuracy-aware code transformations with improved performance,
+%regarding execution time and resource consumptions, while producing small
+%accuracy losses~\cite{misailovic11,douskos11,zhu12}.
+
+\section{Temas de pesquisa}\label{sec:research-dir}
+
+%\FIXME{ZW: Try to summarize your approach in the first paragraph of this section}
+
+É amplamente conhecido que a detecção de paralelismo por compiladores estáticos em programas grandes e gerais é um desafio~\cite{kennedy01,chen03}. A fim de superar as limitações de paralelização automática com base em análise estática para multiprocessadores gerais, pretende-se explorar abordagens otimistas que visam paralelizar de maneira agressiva ao invés de conservadora~\cite{chen03,williams96,williams99}, tais como abordagens evolutivas auxiliadas por técnicas de \textit{profiling} e aprendizagem de máquina.
+
+%It is widely known that detecting parallelism with static compilers in large,
+%general programs is challenging~\cite{kennedy01,chen03}.  In order to overcome
+%the limitations of automatic parallelization based on static analysis for
+%general multiprocessors, we intend to explore optimistic approaches that aim at
+%parallelizing aggressively rather than
+%conservatively~\cite{chen03,williams96,williams99}, such as evolutionary
+%approaches aided by profiling and machine learning techniques. 
+
+%\FIXME{Breakdown your approach to research themes. Make it 
+%clear what problem each theme tries to solve and what's the
+%output of each theme.}
+
+\subsection{Tema 1: Um modelo de otimização}
+
+A fim de superar as limitações da paralelização automática baseada em análise estática, temos a intenção de definir um modelo de otimização para paralelização baseado em otimização discreta. Um modelo de otimização discreta permite usar várias técnicas de programação inteira, como a computação evolucionária, \textit{simulated annealing}, \textit{hill climbing} e outros. Enquanto essa abordagem não é limitada por mecanismos de análise de dependências, vários desafios precisam ser abordados.
+
+%In order to overcome the limitations of automatic parallelization based on
+%static analysis, we intend to define an optimization model for parallelization
+%based on discrete optimization. A discrete optimization model allows for using
+%several integer programming techniques, such as evolutionary computing,
+%simulated annealing, hill climbing and others.  While this
+%approach is not limited by dependence analysis mechanisms, several challenges
+%need to be addressed.
+
+Durante o processo de otimização, cada solução intermediária é avaliada por meio de técnicas de \textit{profiling}. Avaliar eficientemente cada indivíduo é importante para reduzir a latência envolvida em todo processo de paralelização usando uma abordagem evolutiva. Algumas das estratégias para avaliar eficientemente incluem realizar amostragem ou estimar o desempenho o desempenho do código paralelizado~\cite{douskos11,misailovic11,zhu12,fahringer95b,fahringer00,fahringer11}.
+
+%During the optimization process, each intermediate solution is evaluated by
+%means of profiling techniques.  Efficiently profiling each individual is
+%important for reducing the latency involved in the overall parallelization
+%process using the evolutionary approach.  Some of the strategies for
+%efficiently profiling include sampling or estimating the
+%performance~\cite{douskos11,misailovic11,zhu12,fahringer95b,fahringer00,fahringer11}.
+
+\subsection{Tema 2: Paralelização para sistemas heterogêneos e consumo de energia}
+
+%Although automatic parallelization have been widely studied, there is still
+%much to be explored regarding energy consumption, embedded~\cite{cordes10} or
+%emergent computing
+%architectures~\cite{leung09,baskaran10,amini12,govindarajan13}, such as
+%massively parallel processors including graphic processing units (GPUs) or many
+%integrated cores (MICs).
+
+Apesar de que paralelização automática têm sido amplamente estudada, ainda há muito a ser explorado em relação ao consumo de energia, arquiteturas de computação embarcada~\cite{cordes10} ou emergentes~\cite{leung09,baskaran10,amini12,govindarajan13}, como processadores massivamente paralelos, incluindo unidades de processamento gráfico (GPUs) ou processadores de muitos núcleos integrados (MICs).
+
+Vários novos desafios são adicionados quando paralelizamos para sistemas heterogêneos. Além de identificar laços paralelizáveis, deve-se também decidir, para cada laço, se a paralelização do laço será rentável, e em caso afirmativo, onde ele deve ser executado, ou seja, se será executado na CPU, GPU, ou qualquer outro processador paralelo disponível~\cite{tournavitis09,wang14a,leung09}. Em um sistema heterogêneo, além do desempenho bruto de cada processador, sincronização, comunicação de dados ou até mesmo o consumo de energia também devem ser considerados quando se avalia como o mapeamento paralelo deve ser realizado.
+
+%Several new challenges are added when parallelizing for heterogeneous systems.
+%In addition to identifying parallelizable loops, it must also decide, for each
+%loop, if the loop parallelization will be profitable, and if so, where it
+%should be executed, i.e., whether to execute it on the CPU, the GPU, or any
+%other available parallel processor~\cite{tournavitis09,wang14a,leung09}.  In a
+%heterogeneous system, besides the raw performance of each processor,
+%synchronization, data communication or even energy consumption must also be
+%considered when evaluating how the parallel mapping should be performed.
+
+%We intend to extend the discrete optimization model in order to support
+%energy-aware parallelizations, besides integrating with heterogeneous
+%architectures, such as MICs and GPUs.  The optimization model must consider the
+%parallelization profitability for the available architecture,
+%resulting in a model which encompass portable mapping.
+
+Temos a intenção de estender o modelo de otimização discreta, a fim de suportar paralelização sensível à consumo energéticos, além de integrar com arquiteturas heterogêneas, como MICs e GPUs. O modelo de otimização deve considerar a rentabilidade da paralelização para a arquitetura disponível, resultando em um modelo que engloba mapeamento portátil.
+
+\subsection{Tema 3: Solução de violações de dependência durante o tempo de execução}
+
+%By modeling the automatic parallelization as an optimization problem,
+%defining a parallelization search space in an optimistic manner, both the
+%evolutionary and the machine learning based approaches will produce
+%probabilistic solutions.
+
+Abordagens otimistas para paralelização automática produzem soluções probabilística. Se uma solução probabilística for inaceitável, podemos usar técnicas especulativas para detectar violações de dependência em tempo de execução para re-executar seções conflitantes, fornecendo soluções precisas. Este mecanismo de controle de dependência pode ser totalmente implementado em software, semelhante ao Softspec~\cite{bruening98}, permitindo que esta técnica seja utilizada em hardwares paralelos comuns. Embora este mecanismo garante a correção, ele adiciona alguns custos para a execução como um todo, o que precisa ser devidamente equilibrado com questões de desempenho.
+
+%Optimistic approaches for automatic parallelizationg produce probabilistic
+%solutions.  If a probabilistic solution is unacceptable, we can use speculative
+%techniques for detecting dependence violations during runtime for re-execution
+%of conflicting sections providing precise solutions.  This dependence
+%monitoring mechanism can be implemented entirely in software, similar to
+%Softspec~\cite{bruening98}, allowing this technique to be used in general
+%parallel hardware.  Although this mechanism guarantee correctness, it adds some
+%overhead to the overall execution, which needs to be properly balanced for
+%performance.
+
+Também é possível integrar técnicas de paralelização dinâmica, tais como as utilizadas em análises híbridas~\cite{rus03}, que combinam a análise estática com análises em tempo de execução de referências de memória em uma única plataforma. No contexto de sistemas heterogêneos, Govindarajan e Anantpur~\cite{govindarajan13} descrevem um algoritmo que é capaz de calcular as dependências de memória em tempo de execução, onde a computação de dependências e a computação real são executadas diretamente em uma GPU.
+
+%It is also possible to integrate techniques from dynamic parallelization, such
+%as those used by the \emph{hybrid analysis}~\cite{rus03}, which combines static
+%and runtime analysis of memory references into a single framework.  In the
+%context of heterogeneous systems, Govindarajan and
+%Anantpur~\cite{govindarajan13} describe an algorithm which is able to compute
+%memory dependencies at runtime, where dependence computation and actual
+%computation are pipelined on a GPU.
+
+\section{Research plan}
+
+\begin{description}
+
+\item[Year 1] I will perform an extensive literature review in the area,
+identifying weaknesses and strengths of current approaches for automatic
+parallelization.  The discrete optimization model (Theme 1) is intended to be
+developed during the first year.
+
+\item[Year 2] I will extend the optimization model regarding energy
+consumption.  Afterwards, the automatic parallelization will be integrated with
+heterogeneous architectures (Theme 2).  One or two papers are expected during
+the second year.   
+
+\item[Year 3] During the third year, the optimistic automatic parallelization
+will be extended with solutions for dependence violations during runtime (Theme
+3).  One or two papers as well as the Ph.D. thesis are expected during the
+third and final year.
+
+\end{description}
+
+\subsection{Expected results}
+
+In this research, we expect to improve the state-of-the-art in energy-aware
+automatic parallelization for heterogeneous systems, overcoming some of the
+limitations in current dependence analysis mechanisms.  The results produced by
+this research should be published in the main journals and conferences of the
+area.
+
+%\FIXME{We need a conclusion section and timetable here}
+
+\bibliographystyle{abbrv}
+\bibliography{ref}
+\end{document}

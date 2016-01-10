@@ -102,7 +102,7 @@ loops~\cite{kuck81,padua93,blume94,lim97,bondhugula08,misailovic13}.  However,
 automatic parallelization based on static analysis is challenging and limited
 in the type of code that they can
 parallelize~\cite{bruening98,kennedy01,chen03}.  In order to identify parallel
-regions of code they must use complex interprocedural analyses to prove that
+regions of code they must use complex interprocedural analysis to prove that
 the code has no data dependencies for all possible inputs.  Typical code
 targeted by these compilers consists of nested loops with affine array accesses
 written in a language with limited aliasing. Large systems written in modern
@@ -116,13 +116,13 @@ inputs can be impractical for these compilers to parallelize~\cite{bruening98}.
 In contrast to automatic parallelization that aims at generating a parallel
 code, thread-level speculation (TLS) approaches performs sequential code
 parallelization during runtime in a speculative manner.  It consists of
-selecting regions of code to execute in parallel, usually relying on specilized
+selecting regions of code to execute in parallel, usually relying on specialized
 hardware to detect dependence violations and re-execute the conflicting
 sections such that sequential execution semantics is
 preserved~\cite{hammond98,chen03,wu08}.  Although TLS overcomes limitations
 intrinsic with conservative compile-time automatic parallelizing tools by
 extracting parallel threads optimistically and only ensuring absence of data
-dependence violations at runtime, TLS usually requires a specialized hardware
+dependence violations at runtime. TLS usually requires a specialized hardware
 and the overheads associated with maintaining speculative state is a
 significant barrier for its usage~\cite{yiapanis13}.
 
@@ -175,7 +175,7 @@ hardwares with improved performance regarding power consumption, execution
 time, physical space and architectural
 simplicity~\cite{palem09,palem12,lingamneni12,kirsch12}.  Some recent work also
 propose numerous accuracy-aware code transformations with improved performance,
-regarding execution time and resource consumptions, while producing small
+regarding execution time and resource consumption, while producing small
 accuracy losses~\cite{misailovic11,douskos11,zhu12}.
 
 \section{Research Themes}\label{sec:research-dir}
@@ -231,7 +231,7 @@ synchronization, data communication or even energy consumption must also be
 considered when evaluating how the parallel mapping should be performed.
 
 We intend to extend the discrete optimization model in order to support
-energy-aware parallelizations, besides integrating with heterogeneous
+energy-aware parallelization, besides integrating with heterogeneous
 architectures, such as MICs and GPUs.  The optimization model must consider the
 parallelization profitability for the available architecture,
 resulting in a model which encompass portable mapping.
@@ -243,7 +243,7 @@ resulting in a model which encompass portable mapping.
 %evolutionary and the machine learning based approaches will produce
 %probabilistic solutions.
 
-Optimistic approaches for automatic parallelizationg produce probabilistic
+Optimistic approaches for automatic parallelization produce probabilistic
 solutions.  If a probabilistic solution is unacceptable, we can use speculative
 techniques for detecting dependence violations during runtime for re-execution
 of conflicting sections providing precise solutions.  This dependence
